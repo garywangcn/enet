@@ -503,10 +503,9 @@ enet_socket_receive (ENetSocket socket,
       return -1;
 #endif
 
-    if (address != NULL)
-    {
-        address -> host = (enet_uint32) sin.sin_addr.s_addr;
-        address -> port = ENET_NET_TO_HOST_16 (sin.sin_port);
+    if (address != NULL) {
+        address->host = (enet_uint32) sin.sin_addr.s_addr;
+        address->port = ENET_NET_TO_HOST_16 (sin.sin_port);
     }
 
     return recvLength;
@@ -534,35 +533,31 @@ enet_socket_wait (ENetSocket socket, enet_uint32 * condition, enet_uint32 timeou
     pollSocket.events = 0;
 
     if (* condition & ENET_SOCKET_WAIT_SEND)
-      pollSocket.events |= POLLOUT;
+        pollSocket.events |= POLLOUT;
 
     if (* condition & ENET_SOCKET_WAIT_RECEIVE)
-      pollSocket.events |= POLLIN;
+        pollSocket.events |= POLLIN;
 
     pollCount = poll (& pollSocket, 1, timeout);
 
-    if (pollCount < 0)
-    {
-        if (errno == EINTR && * condition & ENET_SOCKET_WAIT_INTERRUPT)
-        {
+    if (pollCount < 0) {
+        if (errno == EINTR && * condition & ENET_SOCKET_WAIT_INTERRUPT) {
             * condition = ENET_SOCKET_WAIT_INTERRUPT;
-
             return 0;
         }
-
         return -1;
     }
 
-    * condition = ENET_SOCKET_WAIT_NONE;
+    *condition = ENET_SOCKET_WAIT_NONE;
 
     if (pollCount == 0)
-      return 0;
+        return 0;
 
     if (pollSocket.revents & POLLOUT)
-      * condition |= ENET_SOCKET_WAIT_SEND;
+        *condition |= ENET_SOCKET_WAIT_SEND;
     
     if (pollSocket.revents & POLLIN)
-      * condition |= ENET_SOCKET_WAIT_RECEIVE;
+        *condition |= ENET_SOCKET_WAIT_RECEIVE;
 
     return 0;
 #else
@@ -577,26 +572,22 @@ enet_socket_wait (ENetSocket socket, enet_uint32 * condition, enet_uint32 timeou
     FD_ZERO (& writeSet);
 
     if (* condition & ENET_SOCKET_WAIT_SEND)
-      FD_SET (socket, & writeSet);
+        FD_SET (socket, & writeSet);
 
     if (* condition & ENET_SOCKET_WAIT_RECEIVE)
-      FD_SET (socket, & readSet);
+         FD_SET (socket, & readSet);
 
     selectCount = select (socket + 1, & readSet, & writeSet, NULL, & timeVal);
 
-    if (selectCount < 0)
-    {
-        if (errno == EINTR && * condition & ENET_SOCKET_WAIT_INTERRUPT)
-        {
+    if (selectCount < 0) {
+        if (errno == EINTR && * condition & ENET_SOCKET_WAIT_INTERRUPT) {
             * condition = ENET_SOCKET_WAIT_INTERRUPT;
-
             return 0;
         }
-      
         return -1;
     }
 
-    * condition = ENET_SOCKET_WAIT_NONE;
+    *condition = ENET_SOCKET_WAIT_NONE;
 
     if (selectCount == 0)
       return 0;

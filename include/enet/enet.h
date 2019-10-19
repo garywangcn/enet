@@ -23,6 +23,7 @@ extern "C"
 #include "enet/list.h"
 #include "enet/callbacks.h"
 
+#define ENET_DEBUG   1
 #define ENET_VERSION_MAJOR 1
 #define ENET_VERSION_MINOR 3
 #define ENET_VERSION_PATCH 14
